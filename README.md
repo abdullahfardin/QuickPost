@@ -1,10 +1,10 @@
-📝 QuickPost - Simple PHP & HTML Blog System
+# 📝 QuickPost - Simple PHP & HTML Blog System
 
 A lightweight, modern, and simple Content Management System (CMS) built with pure HTML/CSS/JS on the frontend and a PHP/MySQL API on the backend.
 
 This project demonstrates a decoupled architecture where the frontend communicates with the backend asynchronously using the Javascript fetch API.
 
-✨ Features
+# ✨ Features
 
 Decoupled Architecture: 100% pure HTML frontend and a hidden PHP backend (API).
 
@@ -18,7 +18,7 @@ Auto-Setup Database: No need to manually create databases or tables in phpMyAdmi
 
 Modern UI: Clean, responsive, and colorful design using the Poppins font and CSS gradients.
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 Frontend: HTML5, CSS3 (Embedded), Vanilla JavaScript (Fetch API)
 
@@ -28,24 +28,7 @@ Database: MySQL
 
 Environment: XAMPP (Apache + MySQL)
 
-📂 File Structure
-
-quickpost/
-│
-├── Backend (API)
-│   ├── db.php        # Database connection & auto-table creation
-│   └── api.php       # Handles all data requests (login, posts, CRUD)
-│
-└── Frontend (UI)
-    ├── index.html    # Home page / Feed of all posts
-    ├── signup.html   # User registration form
-    ├── login.html    # User login form
-    ├── create.html   # Form to write a new post
-    ├── edit.html     # Form to update an existing post
-    └── README.md     # Project documentation
-
-
-🚀 Installation & Setup
+# 🚀 Installation & Setup
 
 Follow these simple steps to get the project running on your local machine using XAMPP.
 
@@ -75,7 +58,7 @@ http://localhost/quickpost/
 
 You do not need to set up the database manually! The very first time you load the app and try to sign up or log in, db.php will automatically create the mini_cms_api database and the required users and posts tables.
 
-💡 Usage Guide
+# 💡 Usage Guide
 
 Sign Up: Start by clicking "Signup" to create a new account.
 
@@ -85,7 +68,7 @@ Write a Post: Click "Write Post" in the navigation bar to publish your first art
 
 Edit/Delete: On the Home page, you will see "Edit" and "Delete" buttons under the posts that belong to you.
 
-🔒 Security Notes
+# 🔒 Security Notes
 
 Passwords are encrypted in the database using PHP's native password_hash().
 
