@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Post</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .navbar h2 { margin: 0; font-weight: 600; letter-spacing: 1px; }
+        .navbar a { color: rgba(255,255,255,0.9); text-decoration: none; margin-left: 20px; font-weight: 500; transition: color 0.3s; cursor: pointer; }
+        .navbar a:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02); }
+        .card h2 { margin-top: 0; color: #2d3748; margin-bottom: 25px; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #4a5568; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 2px solid #e2e8f0; border-radius: 8px; font-family: 'Poppins', sans-serif; transition: border-color 0.3s; font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+        .btn-warning { padding: 12px 24px; font-family: 'Poppins', sans-serif; font-weight: 600; color: #744210; border: none; border-radius: 8px; cursor: pointer; background: #ecc94b; box-shadow: 0 4px 10px rgba(236, 201, 75, 0.3); transition: transform 0.2s, box-shadow 0.2s; font-size: 1rem; }
+        .btn-warning:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(236, 201, 75, 0.4); background: #d69e2e; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>QuickPost</h2>
+        <div><a href="index.html">Cancel / Back</a></div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h2>⚙️ Edit Post</h2>
+            <form id="editForm">
+                <input type="hidden" name="id" id="post_id">
+                <div class="form-group"><label>Title</label><input type="text" name="title" id="title" required></div>
+                <div class="form-group"><label>Tags</label><input type="text" name="tags" id="tags"></div>
+                <div class="form-group"><label>Content</label><textarea name="content" id="content" rows="8" required></textarea></div>
+                <button type="submit" class="btn-warning">Update Post</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            let res = await fetch(`api.php?action=get_single_post&id=${postId}`);
+            let post = await res.json();
+            
+            document.getElementById('post_id').value = post.id;
+            document.getElementById('title').value = post.title;
+            document.getElementById('tags').value = post.tags;
+            document.getElementById('content').value = post.content;
+        });
+
+        document.getElementById('editForm').onsubmit = async (e) => {
+            e.preventDefault();
+            let formData = new FormData(e.target);
+            let res = await fetch('api.php?action=update_post', { method: 'POST', body: formData });
+            let data = await res.json();
+            
+            if (data.success) {
+                window.location = "index.html";
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Write Post</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .navbar h2 { margin: 0; font-weight: 600; letter-spacing: 1px; }
+        .navbar a { color: rgba(255,255,255,0.9); text-decoration: none; margin-left: 20px; font-weight: 500; transition: color 0.3s; cursor: pointer; }
+        .navbar a:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02); }
+        .card h2 { margin-top: 0; color: #2d3748; margin-bottom: 25px; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #4a5568; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 2px solid #e2e8f0; border-radius: 8px; font-family: 'Poppins', sans-serif; transition: border-color 0.3s; font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+        .btn-success { padding: 12px 24px; font-family: 'Poppins', sans-serif; font-weight: 600; color: white; border: none; border-radius: 8px; cursor: pointer; background: #48bb78; box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3); transition: transform 0.2s, box-shadow 0.2s; font-size: 1rem; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(72, 187, 120, 0.4); background: #38a169; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>QuickPost</h2>
+        <div><a href="index.html">Cancel / Back</a></div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h2>✏️ Write a New Post</h2>
+            <form id="createForm">
+                <div class="form-group"><label>Title</label><input type="text" name="title" placeholder="Give it a catchy title" required></div>
+                <div class="form-group"><label>Tags (Comma separated)</label><input type="text" name="tags" placeholder="e.g. tech, lifestyle, updates"></div>
+                <div class="form-group"><label>Content</label><textarea name="content" rows="8" placeholder="Share your thoughts here..." required></textarea></div>
+                <button type="submit" class="btn-success">Publish Post</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('createForm').onsubmit = async (e) => {
+            e.preventDefault();
+            let formData = new FormData(e.target);
+            let res = await fetch('api.php?action=create_post', { method: 'POST', body: formData });
+            let data = await res.json();
+            
+            if (data.success) {
+                window.location = "index.html";
+            }
+        };
+    </script>
+</body>
+</html>

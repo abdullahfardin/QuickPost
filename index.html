@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickPost - Feed</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100; }
+        .navbar h2 { margin: 0; font-weight: 600; letter-spacing: 1px; }
+        .navbar a { color: rgba(255,255,255,0.9); text-decoration: none; margin-left: 20px; font-weight: 500; transition: color 0.3s; cursor: pointer; }
+        .navbar a:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .page-title { color: #2d3748; font-size: 2rem; margin-bottom: 20px; text-align: center; font-weight: 600; }
+        .card { background: white; padding: 30px; margin-bottom: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 18px; font-family: 'Poppins', sans-serif; font-weight: 500; color: white; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; transition: all 0.3s; display: inline-block; text-align: center; }
+        .btn-danger { background: #f56565; }
+        .btn-danger:hover { background: #e53e3e; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(245, 101, 101, 0.3); }
+        .btn-warning { background: #ecc94b; color: #744210; }
+        .btn-warning:hover { background: #d69e2e; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(236, 201, 75, 0.3); }
+        .meta { font-size: 0.85em; color: #718096; margin-bottom: 15px; }
+        .meta strong { color: #4a5568; }
+        .post-content { line-height: 1.7; color: #4a5568; }
+        .tag { background: #ebf4ff; color: #5a67d8; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; margin-right: 8px; font-weight: 500; display: inline-block; margin-top: 15px; }
+        .action-bar { margin-top: 20px; padding-top: 15px; border-top: 1px solid #edf2f7; display: flex; gap: 10px; }
+        .empty-state { text-align: center; padding: 40px; color: #a0aec0; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>QuickPost</h2>
+        <div>
+            <a href="index.html">Home</a>
+            <span id="auth-links"></span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="page-title">Latest Posts</h2>
+        <div id="posts-container">
+            <div class="empty-state">Loading amazing content...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Check if user is logged in
+            let userRes = await fetch('api.php?action=check_user');
+            let user = await userRes.json();
+            
+            let authLinks = document.getElementById('auth-links');
+            if (user.logged_in) {
+                authLinks.innerHTML = `<a href="create.html">Write Post</a> <a onclick="logout()">Logout (@${user.username})</a>`;
+            } else {
+                authLinks.innerHTML = `<a href="login.html">Login</a> <a href="signup.html">Signup</a>`;
+            }
+
+            // 2. Fetch and display posts
+            let postRes = await fetch('api.php?action=get_posts');
+            let posts = await postRes.json();
+            
+            let container = document.getElementById('posts-container');
+            if (posts.length === 0) {
+                container.innerHTML = `<div class="card empty-state"><h3>No posts yet!</h3><p>Be the first to share something.</p></div>`;
+                return;
+            }
+
+            let html = "";
+            posts.forEach(post => {
+                html += `<div class="card">
+                    <h3 style="margin-top:0; color:#2d3748; font-size:1.4rem;">${post.title}</h3>
+                    <div class="meta">By <strong>@${post.username}</strong> on ${post.created_at}</div>
+                    <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>`;
+                
+                if (post.tags) {
+                    html += `<div>`;
+                    post.tags.split(',').forEach(tag => {
+                        if(tag.trim() !== "") html += `<span class="tag">#${tag.trim()}</span>`;
+                    });
+                    html += `</div>`;
+                }
+
+                // If logged in AND user owns the post, show Edit/Delete buttons
+                if (user.logged_in && user.user_id == post.user_id) {
+                    html += `<div class="action-bar">
+                             <a href="edit.html?id=${post.id}" class="btn btn-warning">Edit</a>
+                             <button onclick="deletePost(${post.id})" class="btn btn-danger">Delete</button>
+                             </div>`;
+                }
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+        });
+
+        async function logout() {
+            await fetch('api.php?action=logout');
+            window.location.reload(); 
+        }
+
+        async function deletePost(id) {
+            if (confirm("Delete this post forever?")) {
+                let formData = new FormData();
+                formData.append('id', id);
+                await fetch('api.php?action=delete_post', { method: 'POST', body: formData });
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
